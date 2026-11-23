@@ -9,7 +9,7 @@
 static void q_init(ring_ptr rop)
 {
     GUARD_NULL_PTR(rop, ring_ptr);
-    base(rop, z_ring_ptr) = q_ring[0];
+    base(rop, q_ring_ptr) = q_ring[0];
     mpq_init(val(rop, q_ring_ptr));
 }
 

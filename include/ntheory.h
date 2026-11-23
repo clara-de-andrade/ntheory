@@ -9,6 +9,8 @@
 #include "rings/q.h"
 #include "rings/r.h"
 
+#include "rings/poly.h"
+
 /*****************************************************************************/
 
 #endif

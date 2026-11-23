@@ -35,7 +35,6 @@ static void r_set(ring_ptr rop, ring_srcptr op)
         exit(EXIT_FAILURE);
 
     mpfr_set(val(rop, r_ring_ptr), (val(op, r_ring_ptr)), MPFR_RNDN);
-    ;
 }
 
 static void r_clear(ring_ptr op)

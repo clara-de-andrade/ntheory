@@ -25,7 +25,8 @@ void ring_new(ring_ptr rop, ...)
 
 void ring_set(ring_ptr rop, ring_srcptr op)
 {
-    GUARD_NULL_PTR(op, ring_ptr);
+    GUARD_NULL_PTR(rop, ring_ptr);
+    GUARD_NULL_PTR(op, ring_srcptr);
     GUARD_NULL_PTR(op->set, ring_op_t);
 
     if (rop == op)
@@ -91,7 +92,15 @@ void ring_mul(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
 
 void ring_lmul(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
 {
-    RING_GUARD_INIT(ptr, scratch, rop, rop == op1 || rop == op2);
+    GUARD_NULL_PTR(op1, ring_srcptr);
+    GUARD_NULL_PTR(op2, ring_srcptr);
+    if (op1->vt == op2->vt)
+    {
+        ring_mul(rop, op1, op2);
+        return;
+    }
+
+    RING_GUARD_INIT(ptr, scratch, rop, rop == op1);
     GUARD_NULL_PTR(ptr, ring_ptr);
     GUARD_NULL_PTR(ptr->lmul, ring_op2_t);
 
@@ -112,6 +121,9 @@ void ring_pow(ring_ptr rop, ring_srcptr op1, int64_t op2)
         RING_GUARD_CLEAR(rop, scratch);
         return;
     }
+
+    if (op2 < 0)
+        GUARD_NULL_PTR(op1->inv, ring_op_t);
 
     ring_set_one(ptr);
     if (op2 == 0)
@@ -143,13 +155,25 @@ void ring_pow(ring_ptr rop, ring_srcptr op1, int64_t op2)
     }
 
     RING_TEMP_INIT(base, op1);
-    ring_set(base, op1);
-    while (op2 > 0)
+    uint64_t exp;
+
+    if (op2 > 0)
     {
-        if (op2 & 1)
+        ring_set(base, op1);
+        exp = (uint64_t)op2;
+    }
+    else
+    {
+        ring_inv(base, op1);
+        exp = (uint64_t)(-(op2 + 1)) + 1ULL;
+    }
+
+    while (exp > 0)
+    {
+        if (exp & 1)
             ring_mul(ptr, ptr, base);
-        op2 >>= 1;
-        if (op2 > 0)
+        exp >>= 1;
+        if (exp > 0)
             ring_mul(base, base, base);
     }
     ring_clear(base);
@@ -217,18 +241,30 @@ int ring_cmp(ring_srcptr op1, ring_srcptr op2)
 
 void ring_inv(ring_ptr rop, ring_srcptr op)
 {
+    RING_GUARD_INIT(ptr, scratch, rop, rop == op);
     GUARD_NULL_PTR(op, ring_srcptr);
     GUARD_NULL_PTR(op->inv, ring_op_t);
 
-    op->inv(rop, op);
+    if (ring_is_zero(op))
+        exit(EXIT_FAILURE);
+
+    op->inv(ptr, op);
+
+    RING_GUARD_CLEAR(rop, scratch);
 }
 
 void ring_div(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
 {
+    RING_GUARD_INIT(ptr, scratch, rop, rop == op1 || rop == op2);
     GUARD_NULL_PTR(op1, ring_srcptr);
-    GUARD_NULL_PTR(op1->inv, ring_op_t);
+    GUARD_NULL_PTR(op1->div, ring_op2_t);
 
-    op1->div(rop, op1, op2);
+    if (ring_is_zero(op2))
+        exit(EXIT_FAILURE);
+
+    op1->div(ptr, op1, op2);
+
+    RING_GUARD_CLEAR(rop, scratch);
 }
 
 /*****************************************************************************/

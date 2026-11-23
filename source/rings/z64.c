@@ -16,7 +16,7 @@ static void z64_new(ring_ptr rop, va_list ap)
     if (rop->vt != z64_ring)
         exit(EXIT_FAILURE);
 
-    val(rop, z64_ring_ptr) = va_arg(ap, long long);
+    val(rop, z64_ring_ptr) = va_arg(ap, int64_t);
 }
 
 static void z64_set(ring_ptr rop, ring_srcptr op)
@@ -53,7 +53,8 @@ static void z64_add(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
     if (op2->vt != z64_ring)
         exit(EXIT_FAILURE);
 
-    val(rop, z64_ring_ptr) = val(op1, z64_ring_ptr) + val(op2, z64_ring_ptr);
+    val(rop, z64_ring_ptr) = (int64_t)((uint64_t)val(op1, z64_ring_ptr) +
+                                       (uint64_t)val(op2, z64_ring_ptr));
 }
 
 static void z64_sub(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
@@ -70,7 +71,8 @@ static void z64_sub(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
     if (op2->vt != z64_ring)
         exit(EXIT_FAILURE);
 
-    val(rop, z64_ring_ptr) = val(op1, z64_ring_ptr) - val(op2, z64_ring_ptr);
+    val(rop, z64_ring_ptr) = (int64_t)((uint64_t)val(op1, z64_ring_ptr) -
+                                       (uint64_t)val(op2, z64_ring_ptr));
 }
 
 static void z64_neg(ring_ptr rop, ring_srcptr op)
@@ -83,7 +85,7 @@ static void z64_neg(ring_ptr rop, ring_srcptr op)
     if (op->vt != z64_ring)
         exit(EXIT_FAILURE);
 
-    val(rop, z64_ring_ptr) = -val(op, z64_ring_ptr);
+    val(rop, z64_ring_ptr) = (int64_t)(-(uint64_t)val(op, z64_ring_ptr));
 }
 
 static void z64_mul(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
@@ -100,7 +102,8 @@ static void z64_mul(ring_ptr rop, ring_srcptr op1, ring_srcptr op2)
     if (op2->vt != z64_ring)
         exit(EXIT_FAILURE);
 
-    val(rop, z64_ring_ptr) = val(op1, z64_ring_ptr) * val(op2, z64_ring_ptr);
+    val(rop, z64_ring_ptr) = (int64_t)((uint64_t)val(op1, z64_ring_ptr) *
+                                       (uint64_t)val(op2, z64_ring_ptr));
 }
 
 /*****************************************************************************/

@@ -41,7 +41,7 @@ void poly_set_coeff(poly_ptr rop, ring_srcptr op, size_t index);
 /*****************************************************************************/
 
 void poly_d(poly_ptr rop, poly_srcptr op1);
-void poly_eval(ring_ptr rop, poly_srcptr op1, ring_ptr op2);
+void poly_eval(ring_ptr rop, poly_srcptr op1, ring_srcptr op2);
 void poly_root(mpfr_ptr rop, poly_srcptr op1, mpfr_srcptr op2);
 
 /*****************************************************************************/

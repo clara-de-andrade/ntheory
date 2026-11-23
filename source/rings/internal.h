@@ -33,6 +33,7 @@
     ring_init(var, (model))
 
 #define RING_GUARD_INIT(ptr, scratch, rop, cond)                        \
+    GUARD_NULL_PTR(rop, ring_srcptr);                                   \
     int _aliased_##scratch = (cond);                                    \
     RING_BUFFER_DECLARE(scratch, _aliased_##scratch ? (rop)->size : 1); \
     ring_ptr ptr = (rop);                                               \
